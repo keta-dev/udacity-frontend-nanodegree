@@ -17,27 +17,38 @@
  * Define Global Variables
  * 
 */
-const fragment = document.createDocumentFragment();
-const sectionList = document.querySelectorAll('section');
+const sectionList = Array.from(document.querySelectorAll('section'));
+const menuItem = document.getElementById('navbar__list');
+const menuListItems = sectionList.length;
 
 /**
  * End Global Variables
  * Start Helper Functions
  * 
 */
-function createNavItemHTML(id, name){
-    const itemHTML = `<a class ="menu__link" data-id="${id}">${name}</a>`;
-    return itemHTML;
+const createList = () => {
+    for (section of sectionList) {
+        nameOfSection = section.getAttribute('data-nav');
+        sectionLink = section.getAttribute('id');
+
+        // to create an item for each section
+        item = document.createElement('li');
+
+        // add text to item
+        item.innerHTML = `<a class ="menu__link" data-id="${sectionLink}">${nameOfSection}</a>`
+
+        // append item to the menu
+        menuItem.appendChild(item);
+    }
 }
-function isInViewport (elem) {
-    const bounding = elem.getBoundingClientRect();
-    return (
-        bounding.top >= 0 &&
-        bounding.left >= 0 &&
-        bounding.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-        bounding.right <= (window.innerWidth || document.documentElement.clientWidth)
-    );
-};
+
+
+// The Element.getBoundingClientRect() method returns a DOMRect object providing information about the size of an element and its position relative to the viewport.
+
+const isSectionInViewPort = (ele) => {
+    let position = ele.getBoundingClientRect();
+    return (position.top >= 0);
+}
 
 /**
  * End Helper Functions
@@ -45,30 +56,23 @@ function isInViewport (elem) {
  * 
 */
 
-// build the nav
-function buildNavigation(){
-    for (let i=0; i < sectionList.length; i++){
-        const newMenuItem = document.createElement('li');
-        const sectionName = sectionList[i].getAttribute('data-nav')
-        const sectionId = sectionList[i].getAttribute('id')
-        newMenuItem.innerHTML = createNavItemHTML(sectionId, sectionName)
-         fragment.appendChild(newMenuItem);
-    }
-    const navBarList = document.getElementById('navbar__list')
-    navBarList.appendChild(fragment);
-}
+// to check for section in viewport generally:
 
-// Add class 'active' to section when near top of viewport
-function setActiveClass(){
-    for (let i=0; i < sectionList.length; i++){
-        if (isInViewport(sectionList[i])){
-            sectionList[i].classList.add("your-active-class");
-        }else{
-            sectionList[i].classList.remove("your-active-class");
+// to show the active class in viewport
+const toggleClass = () => {
+    for (section in sectionList) {
+        // if true
+        if (isSectionInViewPort(sectionList[section])) {
+            // if section does not contain active class
+            if (!sectionList[section].classList.contains('your-active-class')) {
+                // add
+                sectionList[section].classList.add('your-active-class');
+            }
+        }  else {
+            sectionList[section].classList.remove('your-active-class');
         }
     }
 }
-
 // Scroll to anchor ID using scrollTO event
 function scrollToElement(event){
     if(event.target.nodeName === 'A'){
@@ -85,16 +89,13 @@ function scrollToElement(event){
  * Begin Events
  * 
 */
-document.addEventListener('scroll', function(){
-    setActiveClass();
-});
-const navBarList = document.getElementById('navbar__list')
-navBarList.addEventListener('click', function(event){
-    scrollToElement(event)
-})
+// document.addEventListener('scroll', setActiveClass);
+
+const navBarList = document.getElementById('navbar__list');
+navBarList.addEventListener('click', (event) => scrollToElement(event));
+
 // Build menu 
-buildNavigation()
-// Scroll to section on link click
+createList();
 
-// Set sections as active
-
+// this scrolls to the selected link
+document.addEventListener('scroll', toggleClass);
