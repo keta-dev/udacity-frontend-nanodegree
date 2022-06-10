@@ -1,98 +1,106 @@
 /**
- * 
- * Manipulating the DOM exercise.
- * Exercise programmatically builds navigation,
- * scrolls to anchors from navigation,
- * and highlights section in viewport upon scrolling.
- * 
- * Dependencies: None
- * 
- * JS Version: ES2015/ES6
- * 
- * JS Standard: ESlint
- * 
-*/
+ Rendering Dynamic Navigation
+ *
+ */
 
 /**
  * Define Global Variables
- * 
-*/
-const sectionList = Array.from(document.querySelectorAll('section'));
-const menuItem = document.getElementById('navbar__list');
+ *
+ */
+const sectionList = Array.from(document.querySelectorAll("section"));
+const menuItem = document.getElementById("navbar__list");
 const menuListItems = sectionList.length;
+const firstSection = document.querySelector("main section");
 
 /**
  * End Global Variables
  * Start Helper Functions
- * 
-*/
+ *
+ */
 const createList = () => {
-    for (section of sectionList) {
-        nameOfSection = section.getAttribute('data-nav');
-        sectionLink = section.getAttribute('id');
+  for (section of sectionList) {
+    nameOfSection = section.getAttribute("data-nav");
+    sectionLink = section.getAttribute("id");
 
-        // to create an item for each section
-        item = document.createElement('li');
+    // to create an item for each section
+    item = document.createElement("li");
 
-        // add text to item
-        item.innerHTML = `<a class ="menu__link" data-id="${sectionLink}">${nameOfSection}</a>`
+    // add text to item
+    item.innerHTML = `<a class ="menu__link" data-id="${sectionLink}">${nameOfSection}</a>`;
 
-        // append item to the menu
-        menuItem.appendChild(item);
-    }
+    // append item to the menu
+    menuItem.appendChild(item);
+  }
+};
+
+// to show the active class in viewport
+function observerFunc() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("active");
+      }
+    });
+  });
+  const sections = document.querySelectorAll("section");
+  sections.forEach((section) => observer.observe(section));
 }
+document.onload = observerFunc();
 
+// Scroll to anchor ID using scrollTO event
+function scrollToElement(event) {
+  if (event.target.nodeName === "A") {
+    const sectionId = event.target.getAttribute("data-id");
+    const section = document.getElementById(sectionId);
+    section.scrollIntoView({ behavior: "smooth" });
+  }
+}
 
 // The Element.getBoundingClientRect() method returns a DOMRect object providing information about the size of an element and its position relative to the viewport.
-
 const isSectionInViewPort = (ele) => {
-    let position = ele.getBoundingClientRect();
-    return (position.top >= 0);
-}
+  let post = ele.getBoundingClientRect();
+  return;
+  post.top >= 0 &&
+    post.bottom <= window.innerHeight &&
+    post.right <= window.innerWidth;
+};
+
+const scrollUp = () => {
+  document.body.scrollTop > 10
+    ? (toTop__btn.style.display = "block")
+    : (toTop__btn.style.display = "none");
+};
+
+const toTop = () => {
+  firstSection.scrollIntoView({ behavior: "smooth" });
+  firstSection.classList.add("active");
+};
 
 /**
  * End Helper Functions
  * Begin Main Functions
- * 
-*/
+ *
+ */
 
-// to check for section in viewport generally:
-
-// to show the active class in viewport
-const toggleClass = () => {
-    for (section in sectionList) {
-        // if true
-        if (isSectionInViewPort(sectionList[section]) && !sectionList[section].classList.contains('your-active-class')) {
-            // if section does not contain active class
-            sectionList[section].classList.add('your-active-class');
-        }  else {
-            sectionList[section].classList.remove('your-active-class');
-        }
-    }
-}
-// Scroll to anchor ID using scrollTO event
-function scrollToElement(event){
-    if(event.target.nodeName === 'A'){
-        const sectionId = event.target.getAttribute('data-id');
-        const section = document.getElementById(sectionId);
-        section.scrollIntoView({behavior: "smooth"});
-    }
-}
-
-
+ function init() {
+    // build the nav
+    createList();
+    toTop__btn.addEventListener("click", toTop);
+  }
+  
+  function onScroll() {
+    scrollUp();
+  }
 
 /**
  * End Main Functions
  * Begin Events
- * 
-*/
+ *
+ */
 // document.addEventListener('scroll', setActiveClass);
 
-const navBarList = document.getElementById('navbar__list');
-navBarList.addEventListener('click', (event) => scrollToElement(event));
+const navBarList = document.getElementById("navbar__list");
+navBarList.addEventListener("click", (event) => scrollToElement(event));
 
-// Build menu 
-createList();
-
-// this scrolls to the selected link
-document.addEventListener('scroll', toggleClass);
+document.addEventListener("DOMContentLoaded", init);
+document.addEventListener("scroll", onScroll);
