@@ -62,12 +62,9 @@ const isSectionInViewPort = (ele) => {
 const toggleClass = () => {
     for (section in sectionList) {
         // if true
-        if (isSectionInViewPort(sectionList[section])) {
+        if (isSectionInViewPort(sectionList[section]) && !sectionList[section].classList.contains('your-active-class')) {
             // if section does not contain active class
-            if (!sectionList[section].classList.contains('your-active-class')) {
-                // add
-                sectionList[section].classList.add('your-active-class');
-            }
+            sectionList[section].classList.add('your-active-class');
         }  else {
             sectionList[section].classList.remove('your-active-class');
         }
