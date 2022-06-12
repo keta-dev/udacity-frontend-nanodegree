@@ -56,13 +56,13 @@ function scrollToElement(event) {
   }
 }
 
-// The Element.getBoundingClientRect() method returns a DOMRect object providing information about the size of an element and its position relative to the viewport.
+// The Element.getBoundingClientposition() method returns a DOMposition object providing information about the size of an element and its position relative to the viewport.
 const isSectionInViewPort = (ele) => {
-  let post = ele.getBoundingClientRect();
-  return;
-  post.top >= 0 &&
-    post.bottom <= window.innerHeight &&
-    post.right <= window.innerWidth;
+  let position = element.getBoundingClientRect();
+
+  return (
+    position.top >= 100 && position.right <= 50
+  );
 };
 
 const scrollUp = () => {
@@ -82,15 +82,15 @@ const toTop = () => {
  *
  */
 
- function init() {
-    // build the nav
-    createList();
-    toTop__btn.addEventListener("click", toTop);
-  }
-  
-  function onScroll() {
-    scrollUp();
-  }
+function init() {
+  // build the nav
+  createList();
+  toTop__btn.addEventListener("click", toTop);
+}
+
+function onScroll() {
+  scrollUp();
+}
 
 /**
  * End Main Functions
